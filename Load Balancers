@@ -1,0 +1,65 @@
+- The load balancing layer is the first point of contact within a data center after the firewall.
+
+
+-> Placing load balancers:
+Place LBs between end users of the application and web servers/application gateway.
+Place LBs between the web servers and application servers that run the business/application logic.
+Place LBs between the application servers and database servers.
+- Genrally speaking, Load balancers operate at 
+- Application layer (layer 7) (can perform content based routing) 
+- Network layer (layer 4) (I.P based routing since it can not read content at this layer)
+
+
+-> Usage: 
+- Health checking: LBs use the heartbeat protocol to monitor the health and, therefore, reliability of end-servers. Another advantage of health checking is the improved user experience.
+- TLS termination: (Transport Layer Security) LBs reduce the burden on end-servers by handling TLS termination with the client.
+- Predictive analytics: LBs can predict traffic patterns through analytics performed over traffic passing through them or using statistics of traffic obtained over time.
+- Reduced human intervention: Because of LB automation, reduced system administration efforts are required in handling failures.
+- Service discovery: An advantage of LBs is that the clients’ requests are forwarded to appropriate hosting servers by inquiring about the service registry.
+- Security: LBs may also improve security by mitigating attacks like denial-of-service (DoS) at different layers of the OSI model (layers 3, 4, and 7).
+- Autoscaling: Starting up and shutting down resources in response to demand conditions.
+- Sticky sessions: The ability to assign the same user or device to the same resource in order to maintain the session state on the resource.
+- Caching: An application-layer load balancer may offer the ability to cache responses.
+- Fixed response: Returning a static response for a request such as an error message.
+
+
+-> Workload distribution
+This is the core functionality provided by a load balancer and has several common variations:
+- Host-based: Distributes requests based on the requested hostname.
+- Path-based: Using the entire URL to distribute requests as opposed to just the hostname.
+- Content-based: Inspects the message content of a request. This allows distribution based on content such as the value of a parameter.
+
+
+-> Types:
+1. Software
+2. Hardware
+3. DNS 
+
+
+-> Routing Algorithms
+- Round-robin: Requests are distributed to application servers in rotation.
+- Weighted Round-robin: Builds on the simple Round-robin technique to account for differing server characteristics such as compute and traffic handling capacity using weights that can be assigned via DNS records by the administrator.
+- Least Connections: A new request is sent to the server with the fewest current connections to clients. The relative computing capacity of each server is factored into determining which one has the least connections.
+- Least Response Time: Sends requests to the server selected by a formula that combines the fastest response time and fewest active connections.
+- Least Bandwidth: This method measures traffic in megabits per second (Mbps), sending client requests to the server with the least Mbps of traffic.
+- Hashing: Distributes requests based on a key we define, such as the client IP address or the request URL.
+
+
+
+
+-> What if load balancers fail? Are they not a single point of failure (SPOF)?
+Load balancers are usually deployed in pairs as a means of disaster recovery. 
+If one load balancer fails, and there’s nothing to failover to, the overall service will go down. 
+Generally, to maintain high availability, enterprises use clusters of load balancers that use heartbeat communication to check the health of load balancers at all times. 
+On failure of primary LB, the backup can take over. But, 
+if the entire cluster fails, manual rerouting can also be performed in case of emergencies
+
+
+
+-> Load Balancer Examples:
+- Amazon Elastic Load Balancing
+- Azure Load Balancing
+- GCP Load Balancing
+- DigitalOcean Load Balancer
+- Nginx
+- HAProxy
