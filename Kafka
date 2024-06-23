@@ -60,6 +60,10 @@ A Group coordinator is a kafka broker which receives heartbeats from all consume
 - A topic with partition as 1 and replication factor as 2 would mean that two copies of the same partition with same data would be stored in the Kafka cluster.
 
 
+-> Retention Period: The messages stored in Kafka are not deleted once consumed, but are deleted by either of the below approaches:
+- time based retention: Messages are deleted only after a certain time period is reached.
+- Size based retention: When a max message size for a partition is reached 
+
 -> Schema Registry
 As the business grows, the kafka message format may change like adding some new field etc
 - Schema registry is external to kafka brokers.
