@@ -1,0 +1,72 @@
+- Kafka is a distributed system that allows multiple services to communicate with each other via its queue based architecture
+Event streaming plarform used to collect, store and process real time data streams at scale.
+
+- Broker: A computer, instance or container running the kafka process is call broker. Multiple brokers would form a Kafka cluster.
+It is responsible for the communication between multiple service (handle write and read request,manage replication of partitions )
+
+- Event: An event in KAfka is modeled as key/value pair.
+The messages that are produced to or consumed from the Kafka broker are called events. These messages are stored in the form of bytes in the broker’s disk storage.
+
+- Topic: a storage unit where all the messages sent by the producer are stored.
+generally,  similar data is stored in individual topics.
+
+
+- Partitions: A topic can be further subdivided into multiple storage units and these subdivisions of a topic are known as partitions.
+By default, a topic is created with only 1 partition and whatever messages are published to this topic are stored in that partition.
+If you configure a topic to have multiple partitions then the messages sent by the producers would be stored in these partitions such that no two partitions would have the same message/event.
+All the partitions in a topic would also have their own offsets.
+
+
+- Consumer Groups
+A bunch of consumers can form a group in order to cooperate and consume messages from a set of topics.
+If two consumers have subscribed to the same topic and are present in the same consumer group, then these two consumers would be assigned a different set of partitions and none of these two consumers would receive the same messages.
+Kafka maintains that no two partitions can be assigned to the consumer in a consumer group
+
+
+- Same vs Different Consumer Groups 
+-> multiple consumers in the same consumer group:
+    Higher throughput or increase the consumption rate for a particular topic.
+    Have at max consumers equal to the number of partitions of a topic in a consumer group
+    Message consumption would be happening in parallel, thereby increasing the consumption rate.
+
+-> multiple consumer groups subscribed to the topic
+    When we want multiple consumers to consume the same messages of a topic
+
+
+->  rebalancing in Kafka
+Rebalancing is the re-assignment of partition ownership among consumers within a given consumer group such that every consumer in a consumer group is assigned one or more partitions.
+
+When??
+A new consumer joins the consumer group
+An existing consumer goes down.
+New partitions are added
+An existing consumer is considered dead by the Group coordinator
+A Group coordinator is a kafka broker which receives heartbeats from all consumers of a consumer group. Every consumer group has a group coordinator.
+
+
+
+->  Replication :
+- Partition data is copied to other brokers for Fault tolerance
+- 1 Leader (main replica) has N-1 Followers (copies)
+- Read and write happens to the leader
+- If one node of the cluster dies, another will take over the role.
+- a replication factor is created for the topics contained in any particular broker.
+- A replication factor is the number of copies of data over multiple brokers. The replication factor value should be greater than 1 always (between 2 or 3). This helps to store a replica of the data in another broker from where the user can access it.
+- The followers(brokers) will be allowed to synchronize the data. But, in the presence of a leader, none of the followers is allowed to serve the client's request. These replicas are known as ISR(in-sync-replica). So, Apache Kafka offers multiple ISR(in-sync-replica) for the data.
+
+
+-> Replication Factor: 
+- The replication factor of a topic decides how many replicas of a partition in that topic should be maintained by the Kafka cluster. 
+- A topic with partition as 1 and replication factor as 2 would mean that two copies of the same partition with same data would be stored in the Kafka cluster.
+
+
+-> Schema Registry
+As the business grows, the kafka message format may change like adding some new field etc
+- Schema registry is external to kafka brokers.
+- maintains a database of schemas
+- this db is perisested in internal kafka topic 
+- kind of producer / consumer api 
+- Defines schema compatibility rules per topic.
+- Producer API prevents incomatible msgs being produced.
+- Consumer  API prevents incomatible msgs being consumed.
+
