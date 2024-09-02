@@ -25,13 +25,13 @@ Place LBs between the application servers and database servers.
 
 -> Workload distribution
 This is the core functionality provided by a load balancer and has several common variations:
-- Host-based: Distributes requests based on the requested hostname.
-- Path-based: Using the entire URL to distribute requests as opposed to just the hostname.
+- Host-based: Distributes requests based on the requested hostname. e.g facebook.com, instagram.com
+- Path-based: Using the entire URL to distribute requests as opposed to just the hostname. e.g: facebook.com/v1/ , facebook.com/v2/
 - Content-based: Inspects the message content of a request. This allows distribution based on content such as the value of a parameter.
 
 
 -> Types:
-1. Software
+1. Software : e.g: Amazon Elastic Load Balancer
 2. Hardware
 3. DNS 
 
