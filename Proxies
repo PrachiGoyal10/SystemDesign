@@ -1,0 +1,7 @@
+Proxy: on behalf of something
+
+
+Forward Proxy: Makes call on behalf of Clients, For blocking some sites, for managing traffic at some institues
+
+Reverse Proxy: Gives response on behalf of Server . used for caching, load balancng, SSL encryption. it can be a single point of failures. 
+good for safety and security.
