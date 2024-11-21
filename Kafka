@@ -74,3 +74,14 @@ As the business grows, the kafka message format may change like adding some new 
 - Producer API prevents incomatible msgs being produced.
 - Consumer  API prevents incomatible msgs being consumed.
 
+- Apache Kafka can leverage kernel bypass techniques indirectly, but it doesn't inherently include kernel bypass as part of its core architecture.
+Instead, Kafka can benefit from kernel bypass via third-party optimizations or infrastructure setups designed to reduce I/O bottlenecks
+
+- Batch Processing APIs
+- Replay messages
+
+Cons:
+- Not ideal for handling very large messages. default size is limkted to 1MB
+- Kafka doesn’t support prioritizing messages within a topic
+
+
