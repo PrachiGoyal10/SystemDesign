@@ -1,91 +1,206 @@
 1. Hash Indexes:
-Data structure that maps keys to values using has function. The hash function generates an index (or location) in the data structure where the corresponding value is stored.
-- NoSQL Databases:
-    Redis: Uses hash tables internally for its in-memory key-value store.
-    Cassandra: Employs consistent hashing for partitioning data across nodes.
-    DynamoDB: Uses hashing for primary keys to ensure data distribution.
-- Relational Databases (RDBMS):
-    PostgreSQL: Supports hash indexes as an option for faster equality lookups.
-    MySQL (via Memory engine): Uses hash indexes for in-memory tables.
-    Used for In-Memory Tables:  
-      The Memory (formerly Heap) storage engine in MySQL uses hash indexes by default.
-      This is because hash indexes are fast for equality lookups and are well-suited for in-memory operations where latency is critical.
-
-Lookup Speed : O(1)
-Range queries: Not Supported
-Space Efficiency : More compact
-Order: Maintained
-Collision Handling: Required
+    Data structure that maps keys to values using has function. The hash function generates an index (or location) in the data structure where the corresponding value is stored.
+    - NoSQL Databases:
+        Redis: Uses hash tables internally for its in-memory key-value store.
+        Cassandra: Employs consistent hashing for partitioning data across nodes.
+        DynamoDB: Uses hashing for primary keys to ensure data distribution.
+    - Relational Databases (RDBMS):
+        PostgreSQL: Supports hash indexes as an option for faster equality lookups.
+        MySQL (via Memory engine): Uses hash indexes for in-memory tables.
+        Used for In-Memory Tables:  
+          The Memory (formerly Heap) storage engine in MySQL uses hash indexes by default.
+          This is because hash indexes are fast for equality lookups and are well-suited for in-memory operations where latency is critical.
+    
+    Lookup Speed : O(1)
+    Range queries: Not Supported
+    Space Efficiency : More compact
+    Order: Maintained
+    Collision Handling: Required
 
 
 
 2. B-Trees (Balanced Tree): 
-self-balancing tree data structure designed to store sorted data in a way that optimizes reads, writes, and queries on large datasets.
-They enable O(logN) complexity for search operations.
-Maintains the data in a sorted order, making range and sorted queries efficient.
-Works well with large datasets because it minimizes disk I/O by reducing the height of the tree, ensuring most lookups require only a few reads.
-Automatically rebalances as data is inserted or deleted, ensuring consistent performance.
-Designed for database systems where data is stored on disk. B-Trees reduce the number of disk reads by grouping keys into blocks that match the disk page size.
-
-- MySQL:
-  B-Trees are the default indexing method for the InnoDB storage engine.
-  Used for primary keys, foreign keys, and secondary indexes.
-  The InnoDB and MyISAM storage engines use B-Tree indexes by default.
-  B-Trees are ideal for disk storage because they minimize disk I/O and support a wide range of queries.
-- PostgreSQL:
-    B-Trees are the default index type, supporting equality and range queries.
-- Some NoSQL databases, like MongoDB, use B-Trees or their variants for indexing collections.
-
-Lookup Speed : O(logN)
-Range queries:  Supported
-Order: Maintained
-Collision Handling: Not Required
-Write Overhead	: Moderate (splitting/merging)	
-Best Use case: Range and sorted queries	
-
-
-
-2. Skip Lists:
-probabilistic data structure that extends the functionality of linked lists by adding multiple levels of "shortcuts" to enable fast search, insertion, and deletion operations.
-It is designed to offer performance comparable to balanced binary trees or B-Trees while being simpler to implement and manage.
-Skip lists are particularly well-suited for in-memory storage and dynamic datasets where updates are frequent.
-Redis uses skip lists to implement it’s sorted sets (ZSET), enabling fast insertions, deletions, and range queries while maintaining sorted order.
+    self-balancing tree data structure designed to store sorted data in a way that optimizes reads, writes, and queries on large datasets.
+    They enable O(logN) complexity for search operations.
+    Maintains the data in a sorted order, making range and sorted queries efficient.
+    Works well with large datasets because it minimizes disk I/O by reducing the height of the tree, ensuring most lookups require only a few reads.
+    Automatically rebalances as data is inserted or deleted, ensuring consistent performance.
+    Designed for database systems where data is stored on disk. B-Trees reduce the number of disk reads by grouping keys into blocks that match the disk page size.
+    
+    - MySQL:
+      B-Trees are the default indexing method for the InnoDB storage engine.
+      Used for primary keys, foreign keys, and secondary indexes.
+      The InnoDB and MyISAM storage engines use B-Tree indexes by default.
+      B-Trees are ideal for disk storage because they minimize disk I/O and support a wide range of queries.
+    - PostgreSQL:
+        B-Trees are the default index type, supporting equality and range queries.
+    - Some NoSQL databases, like MongoDB, use B-Trees or their variants for indexing collections.
+    
+    Lookup Speed : O(logN)
+    Range queries:  Supported
+    Order: Maintained
+    Collision Handling: Not Required
+    Write Overhead	: Moderate (splitting/merging)	
+    Best Use case: Range and sorted queries	
 
 
 
-3. MemTable: 
-A memtable is an in-memory data structure used in modern databases to temporarily store write operations before they are flushed to disk.
-- Write Operations:
-Write data → WAL → MemTable (in-memory, sorted).
+3. Skip Lists:
+    probabilistic data structure that extends the functionality of linked lists by adding multiple levels of "shortcuts" to enable fast search, insertion, and deletion operations.
+    It is designed to offer performance comparable to balanced binary trees or B-Trees while being simpler to implement and manage.
+    Skip lists are particularly well-suited for in-memory storage and dynamic datasets where updates are frequent.
+    Redis uses skip lists to implement it’s sorted sets (ZSET), enabling fast insertions, deletions, and range queries while maintaining sorted order.
 
-When a write operation occurs, data is first written to a write-ahead log (WAL) on disk to ensure durability.
-Then, the data is added to the MemTable in memory, which is organized in a sorted structure (often a skip list).
-- Read Operations:
-MemTable → SSTable (on-disk, immutable).
 
-Reads check the MemTable first for the requested data (since it contains the most recent writes).
-If the data isn’t found, the database looks in the SSTables (sorted string tables) on disk.
-- Flushing to Disk:
-Once the MemTable reaches a size limit, it is flushed to disk as an SSTable. This ensures data persistence and frees up memory for new writes.
 
-It plays a critical role in optimizing write performance and ensuring data durability, especially in databases designed for high-throughput workloads,
-such as Cassandra, RocksDB, and HBase
-In Cassandra, writes are first recorded in the Commit Log (WAL) and then added to the MemTable.
-HBase uses a MemTable (called a MemStore) to temporarily store data before it is written to HFiles on disk.
+4. MemTable: 
+    A memtable is an in-memory data structure used in modern databases to temporarily store write operations before they are flushed to disk.
+    - Write Operations:
+    Write data → WAL → MemTable (in-memory, sorted).
+    
+    When a write operation occurs, data is first written to a write-ahead log (WAL) on disk to ensure durability.
+    Then, the data is added to the MemTable in memory, which is organized in a sorted structure (often a skip list).
+    - Read Operations:
+    MemTable → SSTable (on-disk, immutable).
+    
+    Reads check the MemTable first for the requested data (since it contains the most recent writes).
+    If the data isn’t found, the database looks in the SSTables (sorted string tables) on disk.
+    - Flushing to Disk:
+    Once the MemTable reaches a size limit, it is flushed to disk as an SSTable. This ensures data persistence and frees up memory for new writes.
+    
+    It plays a critical role in optimizing write performance and ensuring data durability, especially in databases designed for high-throughput workloads,
+    such as Cassandra, RocksDB, and HBase
+    In Cassandra, writes are first recorded in the Commit Log (WAL) and then added to the MemTable.
+    HBase uses a MemTable (called a MemStore) to temporarily store data before it is written to HFiles on disk.
+    
+    Advantages of MemTables
+      High Write Throughput:
+      Reduces the number of disk writes by batching data in memory.
+      Fast Reads for Recent Data:
+      Recent writes are immediately available in memory.
+      Efficient Disk Usage:
+      Writes to disk are batched and sequential, reducing random I/O.
+    
+    Memory Constraints:
+      Large MemTables require significant memory allocation.
+      If the database crashes before the MemTable is flushed, data recovery relies on the WAL.
+      Latency Spikes:
+      Flushing a full MemTable to disk can temporarily increase write latency.
 
-Advantages of MemTables
-  High Write Throughput:
-  Reduces the number of disk writes by batching data in memory.
-  Fast Reads for Recent Data:
-  Recent writes are immediately available in memory.
-  Efficient Disk Usage:
-  Writes to disk are batched and sequential, reducing random I/O.
 
-Memory Constraints:
-  Large MemTables require significant memory allocation.
-  If the database crashes before the MemTable is flushed, data recovery relies on the WAL.
-  Latency Spikes:
-  Flushing a full MemTable to disk can temporarily increase write latency.
+
+5. SSTable (Sorted String Table) :
+    Immutable, on-disk data structure used in modern databases like Cassandra, RocksDB, and HBase to store sorted key-value pairs.
+    SSTables are primarily used in Log-Structured Merge Tree (LSM Tree) databases to optimize read and write performance
+    They enable efficient sequential writes, fast lookups, and range queries.
+    
+    Key Characteristics of SSTables:
+    Once written, an SSTable is never modified. New writes are handled by creating new SSTables.
+    SSTables are written as sequential blocks to disk, minimizing fragmentation and improving I/O performance.
+    SSTables include an in-memory index or Bloom filter to quickly determine whether a key might exist without scanning the entire table.
+    Older SSTables are periodically merged into larger tables, removing duplicates and reclaiming storage space.
+    Since SSTables are immutable, there’s no need for complex locks during reads or writes.
+
+
+
+6. Inverted Index: 
+    data structure that maps terms (words or tokens) to the documents or locations where they appear.
+    It is called "inverted" because it reverses the conventional relationship of an index: instead of mapping documents to the terms they contain, it maps terms to the documents that contain them.
+    
+    How Inverted Index is Created:
+    Tokenization: Text is split into individual tokens (words or terms).
+    Example: "Database systems are powerful" → ["database", "systems", "are", "powerful"]
+    
+    Normalization: Tokens are standardized (e.g., lowercased, stemmed, or lemmatized).
+    Example: "Databases" → "database"
+    
+    Index Construction and Storage: For each term, a postings list is created or updated with the document ID and metadata (e.g., term frequency, positions).
+    Inverted indexes are widely used in databases, search engines, and information retrieval systems to enable efficient keyword lookups, Boolean queries, and relevance ranking.
+    
+    - Elasticsearch:
+    Based on Lucene, it uses an inverted index for full-text search.
+    Documents are indexed, and queries retrieve matching documents using the inverted index.
+    
+    - Solr:
+    Another search engine built on Lucene.
+    Uses inverted indexing for fast, scalable text search.
+    
+    - MongoDB:
+    Supports text indexes, which internally use inverted indexes for text search operations.
+
+
+7. Bloom Filter:
+    A Bloom Filter is a space-efficient, probabilistic data structure that answers the question: "Does this element exist in a set?"
+    To insert an element into the Bloom filter, you pass it through each of the k hash functions to get k positions in the bit array. The bits at these positions are set to 1.
+    To check if an element is in the set, you again pass it through the k hash functions to get k positions.
+    If all the bits at these positions are set to 1, the element is probably in the set (though there's a chance it might be a false positive).
+    If any bit at these positions is 0, the element is definitely not in the set.
+    Unlike traditional data structures, it does not store the actual elements, making it extremely memory-efficient.
+    Bloom filters allow databases to quickly check if a key might exist in a specific data structure (e.g., an SSTable or a database partition). 
+    They avoid unnecessary disk lookups in places where the key is guaranteed to be absent.
+
+    Bloom Filters are ideal when:  
+        Memory is constrained.
+        False positives are tolerable (e.g., to avoid unnecessary disk I/O).
+        Data is write-heavy, and immutability is acceptable.
+
+8. R-trees (Rectangle Tree) :
+    Tree-based data structure designed for indexing multidimensional spatial data, such as geographic locations, geometric shapes, or bounding boxes.
+    Effective for queries involving spatial relationships, such as intersections, containment, and nearest neighbors.
+    Each node is represented by an Minimum Bounding Rectangle (MBR) that encloses all its child nodes or objects. Leaf nodes store the actual spatial objects.
+    PostGIS, an extension of PostgreSQL, uses R-Trees to index spatial data for queries like: Find all locations within a rectangular region.
+    Operations on R-Trees
+    Range Query:
+    
+    Example: Find all objects within a given rectangle.
+    The tree is traversed to check intersecting bounding rectangles.
+    Point Query:
+    
+    Example: Check if a specific point exists.
+    Traverse the tree until the point is found or all branches are pruned.
+    Nearest Neighbor:
+    
+    Example: Find the closest object to a given point.
+    Use recursive traversal, pruning nodes based on distances.
+    Insertion:
+    
+    Add the object to the leaf node whose bounding rectangle needs the least enlargement.
+    Split the node if it overflows.
+    Deletion:
+    
+    Remove the object from the leaf node and adjust bounding rectangles.
+    Advantages of R-Trees
+    Efficient Spatial Queries:
+    
+    Fast performance for geospatial queries like range and nearest neighbor searches.
+    Disk-Friendly:
+    
+    Nodes correspond to disk pages, optimizing access for large datasets.
+    Dynamic Updates:
+    
+    Supports insertions and deletions efficiently.
+
+
+9. Write Ahead Log: 
+    A Write-Ahead Log is an append-only persistent log file that records all changes made to a database before they are applied to the actual database.
+
+    This ensures that even if the system crashes during a write operation, the database can recover to a consistent state by replaying or rolling back these logged changes.
+    
+    Structure of a WAL Entry:
+    Transaction ID (TXID): A unique identifier for the transaction.
+    
+    Operation Type: The action performed (INSERT, UPDATE, DELETE).
+    
+    Table Name: The table where the operation occurred.
+    
+    Key: The primary key or unique identifier of the record.
+    
+    Old Value: The previous value of the record (used in UPDATE and DELETE).
+    
+    New Value: The new value of the record (used in INSERT and UPDATE).
+    
+    Timestamp: The time the operation was logged.
+
 
 
 
