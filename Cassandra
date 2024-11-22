@@ -1,0 +1,51 @@
+Cassandra Write Path Overview
+Write-Ahead Log (WAL):
+
+Also called the Commit Log in Cassandra.
+Ensures durability by writing incoming data to disk before it's written elsewhere.
+If Cassandra crashes, the Commit Log can be replayed to recover data.
+MemTable:
+
+An in-memory, sorted data structure where recent writes are stored.
+Each table in Cassandra has its own MemTable.
+Data is stored here temporarily and can be queried immediately.
+SSTable (Sorted String Table):
+
+When the MemTable reaches a specified size, it is flushed to disk as an immutable SSTable.
+SSTables are optimized for reads and serve as the permanent storage format in Cassandra.
+Detailed Write Path in Cassandra
+Step 1: Incoming Write
+
+A client sends a write request.
+The data is written to:
+The Commit Log (for durability).
+The MemTable (for fast access).
+Step 2: MemTable Operations
+
+The MemTable is a sorted structure (like a binary tree or AVL tree).
+Writes are added to the MemTable in sorted order, which makes it efficient for subsequent merges with SSTables.
+Step 3: Flushing
+
+When the MemTable reaches its maximum size (defined by the memtable_heap_space_in_mb setting), it is flushed to disk as an SSTable.
+A new MemTable is created to continue processing writes.
+Step 4: Compaction
+
+Periodically, Cassandra merges and compacts SSTables to reduce fragmentation and improve query performance.
+Advantages of MemTables in Cassandra
+Write Efficiency:
+Batches writes in memory before flushing them to disk, reducing disk I/O overhead.
+Sorted Data:
+Keeps data in a sorted structure, simplifying the merge process with SSTables.
+Durability:
+The Commit Log ensures no data is lost if a crash occurs before flushing.
+MemTable Settings in Cassandra
+You can tune MemTable settings in Cassandra's configuration file (cassandra.yaml) to optimize performance:
+
+Memory Allocation:
+
+memtable_heap_space_in_mb: Total memory allocated for MemTables.
+memtable_offheap_space_in_mb: Specifies off-heap memory allocation for MemTables (optional).
+Flushing Behavior:
+
+memtable_cleanup_threshold: Determines when to trigger a flush based on memory usage.
+memtable_flush_writers: Controls the number of threads that flush MemTables to SSTables.
