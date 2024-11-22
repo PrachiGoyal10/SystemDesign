@@ -1,0 +1,91 @@
+1. Hash Indexes:
+Data structure that maps keys to values using has function. The hash function generates an index (or location) in the data structure where the corresponding value is stored.
+- NoSQL Databases:
+    Redis: Uses hash tables internally for its in-memory key-value store.
+    Cassandra: Employs consistent hashing for partitioning data across nodes.
+    DynamoDB: Uses hashing for primary keys to ensure data distribution.
+- Relational Databases (RDBMS):
+    PostgreSQL: Supports hash indexes as an option for faster equality lookups.
+    MySQL (via Memory engine): Uses hash indexes for in-memory tables.
+    Used for In-Memory Tables:  
+      The Memory (formerly Heap) storage engine in MySQL uses hash indexes by default.
+      This is because hash indexes are fast for equality lookups and are well-suited for in-memory operations where latency is critical.
+
+Lookup Speed : O(1)
+Range queries: Not Supported
+Space Efficiency : More compact
+Order: Maintained
+Collision Handling: Required
+
+
+
+2. B-Trees (Balanced Tree): 
+self-balancing tree data structure designed to store sorted data in a way that optimizes reads, writes, and queries on large datasets.
+They enable O(logN) complexity for search operations.
+Maintains the data in a sorted order, making range and sorted queries efficient.
+Works well with large datasets because it minimizes disk I/O by reducing the height of the tree, ensuring most lookups require only a few reads.
+Automatically rebalances as data is inserted or deleted, ensuring consistent performance.
+Designed for database systems where data is stored on disk. B-Trees reduce the number of disk reads by grouping keys into blocks that match the disk page size.
+
+- MySQL:
+  B-Trees are the default indexing method for the InnoDB storage engine.
+  Used for primary keys, foreign keys, and secondary indexes.
+  The InnoDB and MyISAM storage engines use B-Tree indexes by default.
+  B-Trees are ideal for disk storage because they minimize disk I/O and support a wide range of queries.
+- PostgreSQL:
+    B-Trees are the default index type, supporting equality and range queries.
+- Some NoSQL databases, like MongoDB, use B-Trees or their variants for indexing collections.
+
+Lookup Speed : O(logN)
+Range queries:  Supported
+Order: Maintained
+Collision Handling: Not Required
+Write Overhead	: Moderate (splitting/merging)	
+Best Use case: Range and sorted queries	
+
+
+
+2. Skip Lists:
+probabilistic data structure that extends the functionality of linked lists by adding multiple levels of "shortcuts" to enable fast search, insertion, and deletion operations.
+It is designed to offer performance comparable to balanced binary trees or B-Trees while being simpler to implement and manage.
+Skip lists are particularly well-suited for in-memory storage and dynamic datasets where updates are frequent.
+Redis uses skip lists to implement it’s sorted sets (ZSET), enabling fast insertions, deletions, and range queries while maintaining sorted order.
+
+
+
+3. MemTable: 
+A memtable is an in-memory data structure used in modern databases to temporarily store write operations before they are flushed to disk.
+- Write Operations:
+Write data → WAL → MemTable (in-memory, sorted).
+
+When a write operation occurs, data is first written to a write-ahead log (WAL) on disk to ensure durability.
+Then, the data is added to the MemTable in memory, which is organized in a sorted structure (often a skip list).
+- Read Operations:
+MemTable → SSTable (on-disk, immutable).
+
+Reads check the MemTable first for the requested data (since it contains the most recent writes).
+If the data isn’t found, the database looks in the SSTables (sorted string tables) on disk.
+- Flushing to Disk:
+Once the MemTable reaches a size limit, it is flushed to disk as an SSTable. This ensures data persistence and frees up memory for new writes.
+
+It plays a critical role in optimizing write performance and ensuring data durability, especially in databases designed for high-throughput workloads,
+such as Cassandra, RocksDB, and HBase
+In Cassandra, writes are first recorded in the Commit Log (WAL) and then added to the MemTable.
+HBase uses a MemTable (called a MemStore) to temporarily store data before it is written to HFiles on disk.
+
+Advantages of MemTables
+  High Write Throughput:
+  Reduces the number of disk writes by batching data in memory.
+  Fast Reads for Recent Data:
+  Recent writes are immediately available in memory.
+  Efficient Disk Usage:
+  Writes to disk are batched and sequential, reducing random I/O.
+
+Memory Constraints:
+  Large MemTables require significant memory allocation.
+  If the database crashes before the MemTable is flushed, data recovery relies on the WAL.
+  Latency Spikes:
+  Flushing a full MemTable to disk can temporarily increase write latency.
+
+
+
